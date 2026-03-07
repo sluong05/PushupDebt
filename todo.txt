@@ -1,0 +1,1 @@
+pushup detector is a little bugged, if you are on screen and bend your elbows it will think you did a pushup so you can cheese it.

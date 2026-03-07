@@ -1,0 +1,168 @@
+import { useState } from 'react';
+import { completeTask, deleteTask } from '../lib/api';
+
+function formatDueDate(dateStr) {
+  const date = new Date(dateStr);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const taskDay = new Date(date);
+  taskDay.setHours(0, 0, 0, 0);
+
+  const diff = (taskDay - today) / (1000 * 60 * 60 * 24);
+
+  if (diff < 0) {
+    const days = Math.abs(Math.floor(diff));
+    return { label: days === 1 ? '1 day overdue' : `${days} days overdue`, overdue: true };
+  }
+  if (diff === 0) return { label: 'Due today', overdue: false };
+  if (diff === 1) return { label: 'Due tomorrow', overdue: false };
+  return {
+    label: `Due ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+    overdue: false,
+  };
+}
+
+function TaskItem({ task, onComplete, onDelete }) {
+  const [completing, setCompleting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const dueInfo = formatDueDate(task.dueDate);
+
+  async function handleComplete() {
+    setCompleting(true);
+    try {
+      await onComplete(task.id);
+    } finally {
+      setCompleting(false);
+    }
+  }
+
+  async function handleDelete() {
+    setDeleting(true);
+    try {
+      await onDelete(task.id);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  const hasDebt = task.pushupDebt && !task.pushupDebt.resolved;
+
+  return (
+    <div
+      className={`flex items-start gap-3 p-4 rounded-xl border transition-all ${
+        task.completed
+          ? 'border-zinc-800 bg-zinc-800/30 opacity-60'
+          : hasDebt
+          ? 'border-red-800/60 bg-red-900/10'
+          : 'border-zinc-800 bg-zinc-800/50 hover:border-zinc-700'
+      }`}
+    >
+      {/* Checkbox */}
+      <button
+        onClick={handleComplete}
+        disabled={task.completed || completing}
+        className={`mt-0.5 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all ${
+          task.completed
+            ? 'bg-green-500 border-green-500'
+            : 'border-zinc-600 hover:border-orange-400'
+        }`}
+      >
+        {task.completed && (
+          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        )}
+        {completing && <span className="w-2.5 h-2.5 border border-zinc-400 rounded-full animate-spin border-t-transparent" />}
+      </button>
+
+      {/* Task content */}
+      <div className="flex-1 min-w-0">
+        <p className={`font-medium text-sm ${task.completed ? 'line-through text-zinc-500' : 'text-zinc-100'}`}>
+          {task.title}
+        </p>
+        <div className="flex items-center gap-2 mt-1 flex-wrap">
+          <span className={`text-xs ${dueInfo.overdue && !task.completed ? 'text-red-400 font-medium' : 'text-zinc-500'}`}>
+            {dueInfo.label}
+          </span>
+          {hasDebt && (
+            <span className="text-xs bg-red-900/40 text-red-400 px-2 py-0.5 rounded-full font-medium">
+              {Math.ceil(task.pushupDebt.pushupsOwed)} pushups owed
+            </span>
+          )}
+          {task.pushupDebt?.interestApplied && (
+            <span className="text-xs text-orange-500/70">+10% interest</span>
+          )}
+        </div>
+      </div>
+
+      {/* Delete */}
+      <button
+        onClick={handleDelete}
+        disabled={deleting}
+        className="text-zinc-600 hover:text-red-400 transition-colors p-1 flex-shrink-0"
+        title="Delete task"
+      >
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+export default function TaskList({ tasks, onTaskUpdated }) {
+  async function handleComplete(taskId) {
+    try {
+      await completeTask(taskId);
+      onTaskUpdated();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function handleDelete(taskId) {
+    try {
+      await deleteTask(taskId);
+      onTaskUpdated();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  const pending = tasks.filter((t) => !t.completed);
+  const completed = tasks.filter((t) => t.completed);
+
+  if (tasks.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-4xl mb-3">✅</p>
+        <p className="text-zinc-400 font-medium">No tasks yet</p>
+        <p className="text-zinc-600 text-sm mt-1">Add a task to get started</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      {pending.map((task) => (
+        <TaskItem
+          key={task.id}
+          task={task}
+          onComplete={handleComplete}
+          onDelete={handleDelete}
+        />
+      ))}
+      {completed.length > 0 && pending.length > 0 && (
+        <div className="border-t border-zinc-800 my-3" />
+      )}
+      {completed.map((task) => (
+        <TaskItem
+          key={task.id}
+          task={task}
+          onComplete={handleComplete}
+          onDelete={handleDelete}
+        />
+      ))}
+    </div>
+  );
+}

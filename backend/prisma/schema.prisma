@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  tasks          Task[]
+  pushupSessions PushupSession[]
+}
+
+model Task {
+  id          Int       @id @default(autoincrement())
+  title       String
+  completed   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  dueDate     DateTime
+  completedAt DateTime?
+  userId      Int
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pushupDebt PushupDebt?
+}
+
+model PushupDebt {
+  id              Int      @id @default(autoincrement())
+  taskId          Int      @unique
+  pushupsOwed     Float
+  daysOverdue     Int
+  interestApplied Boolean  @default(false)
+  resolved        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model PushupSession {
+  id               Int      @id @default(autoincrement())
+  pushupsCompleted Int
+  date             DateTime @default(now())
+  userId           Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

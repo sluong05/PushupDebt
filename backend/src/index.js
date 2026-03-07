@@ -1,0 +1,34 @@
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const { startDebtCronJob } = require('./jobs/dailyDebt');
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+// Middleware
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  credentials: true,
+}));
+app.use(express.json());
+
+// Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/tasks', require('./routes/tasks'));
+app.use('/api/debt', require('./routes/debt'));
+app.use('/api/sessions', require('./routes/sessions'));
+app.use('/api/leaderboard', require('./routes/leaderboard'));
+app.use('/api/streak', require('./routes/streak'));
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Start cron job
+startDebtCronJob();
+
+app.listen(PORT, () => {
+  console.log(`Pushup Debt API running on http://localhost:${PORT}`);
+});

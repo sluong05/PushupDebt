@@ -1,0 +1,16 @@
+{
+  "name": "pushup-debt",
+  "version": "1.0.0",
+  "description": "Pushup Debt — monorepo root",
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "setup": "npm run install:all && cd backend && cp .env.example .env && npm run db:migrate && npm run db:generate",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build": "cd frontend && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
