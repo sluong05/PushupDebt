@@ -33,10 +33,10 @@ export default function AddTaskModal({ onClose, onTaskAdded }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="card w-full max-w-md">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-zinc-100">New Task</h2>
+          <h2 className="text-lg font-bold text-navy-50">New Task</h2>
           <button onClick={onClose} className="btn-ghost p-1 text-lg leading-none">
             ✕
           </button>
@@ -64,7 +64,7 @@ export default function AddTaskModal({ onClose, onTaskAdded }) {
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
             />
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="text-xs text-navy-300 mt-1">
               Incomplete tasks past this date generate pushup debt.
             </p>
           </div>

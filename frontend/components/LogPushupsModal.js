@@ -32,10 +32,10 @@ export default function LogPushupsModal({ totalOwed, onClose, onLogged }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="card w-full max-w-md">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-zinc-100">Log Pushups</h2>
+          <h2 className="text-lg font-bold text-navy-50">Log Pushups</h2>
           <button onClick={onClose} className="btn-ghost p-1 text-lg leading-none">
             ✕
           </button>
@@ -45,19 +45,19 @@ export default function LogPushupsModal({ totalOwed, onClose, onLogged }) {
         <Link
           href="/verify-pushups"
           onClick={onClose}
-          className="flex items-center gap-3 bg-orange-500/10 border border-orange-500/30 hover:border-orange-500/60 rounded-xl p-4 mb-5 transition-colors group"
+          className="flex items-center gap-3 bg-amber-500/10 border border-amber-500/30 hover:border-amber-500/60 rounded-xl p-4 mb-5 transition-colors group"
         >
-          <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-orange-500/30 transition-colors">
+          <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-500/30 transition-colors">
             <span className="text-xl">📷</span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-orange-400">Use Camera Verification</p>
-            <p className="text-xs text-zinc-500 mt-0.5">
+            <p className="text-sm font-semibold text-amber-400">Use Camera Verification</p>
+            <p className="text-xs text-navy-200 mt-0.5">
               MediaPipe Pose tracks your elbows and counts reps automatically
             </p>
           </div>
           <svg
-            className="w-4 h-4 text-zinc-600 group-hover:text-orange-400 transition-colors flex-shrink-0"
+            className="w-4 h-4 text-navy-300 group-hover:text-amber-400 transition-colors flex-shrink-0"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -69,16 +69,16 @@ export default function LogPushupsModal({ totalOwed, onClose, onLogged }) {
 
         {/* Divider */}
         <div className="flex items-center gap-3 mb-5">
-          <div className="flex-1 h-px bg-zinc-800" />
-          <span className="text-xs text-zinc-600 font-medium">or log manually</span>
-          <div className="flex-1 h-px bg-zinc-800" />
+          <div className="flex-1 h-px bg-navy-400" />
+          <span className="text-xs text-navy-300 font-medium">or log manually</span>
+          <div className="flex-1 h-px bg-navy-400" />
         </div>
 
         {/* Debt display */}
-        <div className="bg-red-900/20 border border-red-800/50 rounded-xl p-4 mb-5 text-center">
-          <p className="text-sm text-zinc-400 mb-1">Current Debt</p>
+        <div className="bg-red-900/20 border border-red-700/50 rounded-xl p-4 mb-5 text-center">
+          <p className="text-sm text-navy-100 mb-1">Current Debt</p>
           <p className="text-4xl font-bold text-red-400">{totalOwed}</p>
-          <p className="text-sm text-zinc-500 mt-1">pushups owed</p>
+          <p className="text-sm text-navy-200 mt-1">pushups owed</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -94,8 +94,8 @@ export default function LogPushupsModal({ totalOwed, onClose, onLogged }) {
                     onClick={() => setCount(String(n))}
                     className={`py-2 rounded-lg text-sm font-semibold border transition-colors ${
                       count === String(n)
-                        ? 'bg-orange-500 border-orange-500 text-white'
-                        : 'bg-zinc-800 border-zinc-700 text-zinc-300 hover:border-orange-500 hover:text-orange-400'
+                        ? 'bg-amber-500 border-amber-500 text-white'
+                        : 'bg-navy-700 border-navy-400 text-navy-100 hover:border-amber-500 hover:text-amber-400'
                     }`}
                   >
                     {n}
@@ -119,14 +119,14 @@ export default function LogPushupsModal({ totalOwed, onClose, onLogged }) {
           </div>
 
           {count && parseInt(count) > 0 && (
-            <div className="bg-zinc-800/50 rounded-lg p-3 text-center">
-              <p className="text-sm text-zinc-400">
+            <div className="bg-navy-700/50 rounded-lg p-3 text-center">
+              <p className="text-sm text-navy-100">
                 After logging:{' '}
                 <span
                   className={`font-bold ${
                     Math.max(0, totalOwed - parseInt(count)) === 0
                       ? 'text-green-400'
-                      : 'text-orange-400'
+                      : 'text-amber-400'
                   }`}
                 >
                   {Math.max(0, totalOwed - parseInt(count))} pushups

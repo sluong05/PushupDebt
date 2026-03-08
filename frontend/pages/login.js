@@ -32,17 +32,17 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-navy-700 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="text-5xl mb-3">💪</div>
-          <h1 className="text-2xl font-bold text-zinc-100">Pushup Debt</h1>
-          <p className="text-zinc-500 text-sm mt-1">Turn procrastination into gains</p>
+          <h1 className="text-2xl font-bold text-navy-50">Pushup Debt</h1>
+          <p className="text-navy-200 text-sm mt-1">Turn procrastination into gains</p>
         </div>
 
         <div className="card">
-          <h2 className="text-lg font-bold text-zinc-100 mb-6">Sign In</h2>
+          <h2 className="text-lg font-bold text-navy-50 mb-6">Sign In</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -81,9 +81,9 @@ export default function Login() {
             </button>
           </form>
 
-          <p className="text-center text-zinc-500 text-sm mt-6">
+          <p className="text-center text-navy-200 text-sm mt-6">
             No account?{' '}
-            <Link href="/signup" className="text-orange-400 hover:text-orange-300 font-medium">
+            <Link href="/signup" className="text-amber-400 hover:text-amber-300 font-medium">
               Sign up
             </Link>
           </p>

@@ -85,8 +85,8 @@ export default function Dashboard() {
 
   if (authLoading || (!user && !authLoading)) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-navy-600 flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -101,7 +101,7 @@ export default function Dashboard() {
 
       {dataLoading ? (
         <div className="flex items-center justify-center py-24">
-          <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -111,14 +111,14 @@ export default function Dashboard() {
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-base font-bold text-zinc-100">Tasks</h2>
+                    <h2 className="text-base font-bold text-navy-50">Tasks</h2>
                     {overdueCount > 0 && (
                       <span className="text-xs bg-red-900/40 text-red-400 px-2 py-0.5 rounded-full font-medium">
                         {overdueCount} overdue
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-zinc-500 mt-0.5">
+                  <p className="text-xs text-navy-200 mt-0.5">
                     {completedCount}/{tasks.length} completed
                   </p>
                 </div>
@@ -136,9 +136,9 @@ export default function Dashboard() {
               {/* Progress bar */}
               {tasks.length > 0 && (
                 <div className="mb-5">
-                  <div className="w-full bg-zinc-800 rounded-full h-1.5">
+                  <div className="w-full bg-navy-700 rounded-full h-1.5">
                     <div
-                      className="bg-green-500 h-1.5 rounded-full transition-all duration-500"
+                      className="bg-amber-500 h-1.5 rounded-full transition-all duration-500"
                       style={{ width: `${tasks.length > 0 ? (completedCount / tasks.length) * 100 : 0}%` }}
                     />
                   </div>
@@ -151,18 +151,18 @@ export default function Dashboard() {
             {/* Stats row */}
             <div className="grid grid-cols-3 gap-3 mt-4">
               <div className="card py-4 text-center">
-                <p className="text-2xl font-bold text-zinc-100">{tasks.length}</p>
-                <p className="text-xs text-zinc-500 mt-1">Active Tasks</p>
+                <p className="text-2xl font-bold text-navy-50">{tasks.length}</p>
+                <p className="text-xs text-navy-200 mt-1">Active Tasks</p>
               </div>
               <div className="card py-4 text-center">
                 <p className="text-2xl font-bold text-green-400">{completedCount}</p>
-                <p className="text-xs text-zinc-500 mt-1">Completed</p>
+                <p className="text-xs text-navy-200 mt-1">Completed</p>
               </div>
               <div className="card py-4 text-center">
-                <p className={`text-2xl font-bold ${pendingCount > 0 ? 'text-orange-400' : 'text-zinc-400'}`}>
+                <p className={`text-2xl font-bold ${pendingCount > 0 ? 'text-amber-400' : 'text-navy-300'}`}>
                   {pendingCount}
                 </p>
-                <p className="text-xs text-zinc-500 mt-1">Pending</p>
+                <p className="text-xs text-navy-200 mt-1">Pending</p>
               </div>
             </div>
           </div>
@@ -170,11 +170,11 @@ export default function Dashboard() {
           {/* Right column — Debt */}
           <div className="lg:col-span-2">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-base font-bold text-zinc-100">Pushup Debt</h2>
+              <h2 className="text-base font-bold text-navy-50">Pushup Debt</h2>
               {totalOwed > 0 && (
                 <button
                   onClick={() => setShowLogPushups(true)}
-                  className="text-xs text-orange-400 hover:text-orange-300 font-medium"
+                  className="text-xs text-amber-400 hover:text-amber-300 font-medium"
                 >
                   Log pushups →
                 </button>
@@ -189,21 +189,21 @@ export default function Dashboard() {
             />
 
             {/* Formula info */}
-            <div className="card mt-4 bg-zinc-900/50">
-              <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">
+            <div className="card mt-4 bg-navy-700/50">
+              <h3 className="text-xs font-semibold text-navy-200 uppercase tracking-wide mb-3">
                 How It Works
               </h3>
-              <div className="space-y-2 text-xs text-zinc-500">
+              <div className="space-y-2 text-xs text-navy-200">
                 <div className="flex items-center gap-2">
-                  <span className="text-orange-400 font-mono">5 × days</span>
+                  <span className="text-amber-400 font-mono">5 × days</span>
                   <span>pushups per overdue day</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-orange-400 font-mono">×1.10</span>
+                  <span className="text-amber-400 font-mono">×1.10</span>
                   <span>daily interest on unpaid debt</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-orange-400 font-mono">🔥</span>
+                  <span className="text-amber-400 font-mono">🔥</span>
                   <span>streak resets if debt remains</span>
                 </div>
               </div>

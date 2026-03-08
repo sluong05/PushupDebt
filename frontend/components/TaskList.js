@@ -51,10 +51,10 @@ function TaskItem({ task, onComplete, onDelete }) {
     <div
       className={`flex items-start gap-3 p-4 rounded-xl border transition-all ${
         task.completed
-          ? 'border-zinc-800 bg-zinc-800/30 opacity-60'
+          ? 'border-navy-400 bg-navy-600/40 opacity-60'
           : hasDebt
-          ? 'border-red-800/60 bg-red-900/10'
-          : 'border-zinc-800 bg-zinc-800/50 hover:border-zinc-700'
+          ? 'border-red-700/50 bg-red-900/10'
+          : 'border-navy-400 bg-navy-600/60 hover:border-navy-300'
       }`}
     >
       {/* Checkbox */}
@@ -64,7 +64,7 @@ function TaskItem({ task, onComplete, onDelete }) {
         className={`mt-0.5 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all ${
           task.completed
             ? 'bg-green-500 border-green-500'
-            : 'border-zinc-600 hover:border-orange-400'
+            : 'border-navy-300 hover:border-amber-400'
         }`}
       >
         {task.completed && (
@@ -72,16 +72,16 @@ function TaskItem({ task, onComplete, onDelete }) {
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         )}
-        {completing && <span className="w-2.5 h-2.5 border border-zinc-400 rounded-full animate-spin border-t-transparent" />}
+        {completing && <span className="w-2.5 h-2.5 border border-navy-200 rounded-full animate-spin border-t-transparent" />}
       </button>
 
       {/* Task content */}
       <div className="flex-1 min-w-0">
-        <p className={`font-medium text-sm ${task.completed ? 'line-through text-zinc-500' : 'text-zinc-100'}`}>
+        <p className={`font-medium text-sm ${task.completed ? 'line-through text-navy-300' : 'text-navy-50'}`}>
           {task.title}
         </p>
         <div className="flex items-center gap-2 mt-1 flex-wrap">
-          <span className={`text-xs ${dueInfo.overdue && !task.completed ? 'text-red-400 font-medium' : 'text-zinc-500'}`}>
+          <span className={`text-xs ${dueInfo.overdue && !task.completed ? 'text-red-400 font-medium' : 'text-navy-200'}`}>
             {dueInfo.label}
           </span>
           {hasDebt && (
@@ -90,7 +90,7 @@ function TaskItem({ task, onComplete, onDelete }) {
             </span>
           )}
           {task.pushupDebt?.interestApplied && (
-            <span className="text-xs text-orange-500/70">+10% interest</span>
+            <span className="text-xs text-amber-500/70">+10% interest</span>
           )}
         </div>
       </div>
@@ -99,7 +99,7 @@ function TaskItem({ task, onComplete, onDelete }) {
       <button
         onClick={handleDelete}
         disabled={deleting}
-        className="text-zinc-600 hover:text-red-400 transition-colors p-1 flex-shrink-0"
+        className="text-navy-300 hover:text-red-400 transition-colors p-1 flex-shrink-0"
         title="Delete task"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -136,8 +136,8 @@ export default function TaskList({ tasks, onTaskUpdated }) {
     return (
       <div className="text-center py-12">
         <p className="text-4xl mb-3">✅</p>
-        <p className="text-zinc-400 font-medium">No tasks yet</p>
-        <p className="text-zinc-600 text-sm mt-1">Add a task to get started</p>
+        <p className="text-navy-100 font-medium">No tasks yet</p>
+        <p className="text-navy-300 text-sm mt-1">Add a task to get started</p>
       </div>
     );
   }
@@ -145,23 +145,13 @@ export default function TaskList({ tasks, onTaskUpdated }) {
   return (
     <div className="space-y-2">
       {pending.map((task) => (
-        <TaskItem
-          key={task.id}
-          task={task}
-          onComplete={handleComplete}
-          onDelete={handleDelete}
-        />
+        <TaskItem key={task.id} task={task} onComplete={handleComplete} onDelete={handleDelete} />
       ))}
       {completed.length > 0 && pending.length > 0 && (
-        <div className="border-t border-zinc-800 my-3" />
+        <div className="border-t border-navy-400 my-3" />
       )}
       {completed.map((task) => (
-        <TaskItem
-          key={task.id}
-          task={task}
-          onComplete={handleComplete}
-          onDelete={handleDelete}
-        />
+        <TaskItem key={task.id} task={task} onComplete={handleComplete} onDelete={handleDelete} />
       ))}
     </div>
   );

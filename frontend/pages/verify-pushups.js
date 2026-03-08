@@ -397,8 +397,8 @@ export default function VerifyPushups() {
   // ── Auth loading screen ──────────────────────────────────────────────────────
   if (authLoading || (!user && !authLoading)) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-navy-600 flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -413,21 +413,21 @@ export default function VerifyPushups() {
           <div>
             <Link
               href="/"
-              className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-300 mb-2 transition-colors"
+              className="inline-flex items-center gap-1 text-sm text-navy-200 hover:text-navy-100 mb-2 transition-colors"
             >
               ← Dashboard
             </Link>
-            <h1 className="text-2xl font-bold text-zinc-100">Verify Pushups</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">
+            <h1 className="text-2xl font-bold text-navy-50">Verify Pushups</h1>
+            <p className="text-navy-200 text-sm mt-0.5">
               Camera-verified reps · elbow angle tracking
             </p>
           </div>
           <div className="card py-3 px-5 text-center flex-shrink-0">
-            <p className="text-xs text-zinc-500 mb-0.5">Debt Remaining</p>
+            <p className="text-xs text-navy-200 mb-0.5">Debt Remaining</p>
             <p className={`text-2xl font-bold tabular-nums ${totalOwed > 0 ? 'text-red-400' : 'text-green-400'}`}>
               {totalOwed}
             </p>
-            <p className="text-xs text-zinc-600">pushups</p>
+            <p className="text-xs text-navy-300">pushups</p>
           </div>
         </div>
 
@@ -437,20 +437,20 @@ export default function VerifyPushups() {
           <div className="lg:col-span-2 space-y-3">
 
             {/* Video container */}
-            <div className="card p-0 overflow-hidden bg-zinc-950 relative" style={{ aspectRatio: '4/3' }}>
+            <div className="card p-0 overflow-hidden bg-navy-600 relative" style={{ aspectRatio: '4/3' }}>
 
               {/* Loading overlay */}
               {mpLoading && (
-                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-zinc-900">
-                  <div className="w-10 h-10 border-2 border-orange-500 border-t-transparent rounded-full animate-spin mb-4" />
-                  <p className="text-zinc-300 font-medium">Loading pose detection…</p>
-                  <p className="text-zinc-600 text-xs mt-1">Downloading MediaPipe model (~10 MB)</p>
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-navy-700">
+                  <div className="w-10 h-10 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mb-4" />
+                  <p className="text-navy-100 font-medium">Loading pose detection…</p>
+                  <p className="text-navy-300 text-xs mt-1">Downloading MediaPipe model (~10 MB)</p>
                 </div>
               )}
 
               {/* Camera error overlay */}
               {camError && !mpLoading && (
-                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-zinc-900 p-8 text-center">
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-navy-700 p-8 text-center">
                   <span className="text-5xl mb-4">📷</span>
                   <p className="text-red-400 font-medium">{camError}</p>
                   <button
@@ -485,7 +485,7 @@ export default function VerifyPushups() {
                     onClick={startCounting}
                     className="flex flex-col items-center gap-3 group"
                   >
-                    <div className="w-20 h-20 rounded-full bg-orange-500 hover:bg-orange-400 flex items-center justify-center shadow-2xl shadow-orange-500/40 transition-all duration-150 group-hover:scale-105">
+                    <div className="w-20 h-20 rounded-full bg-amber-500 hover:bg-amber-400 flex items-center justify-center shadow-2xl shadow-amber-500/40 transition-all duration-150 group-hover:scale-105">
                       <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z" />
                       </svg>
@@ -493,7 +493,7 @@ export default function VerifyPushups() {
                     <span className="text-white font-bold text-lg drop-shadow-md">
                       {reps > 0 ? 'Resume Counting' : 'Start Counting'}
                     </span>
-                    <span className="text-zinc-300 text-sm drop-shadow-md">
+                    <span className="text-navy-100 text-sm drop-shadow-md">
                       Get in position first
                     </span>
                   </button>
@@ -507,8 +507,8 @@ export default function VerifyPushups() {
                     <span
                       className={`text-xs font-bold px-3 py-1.5 rounded-full shadow-lg transition-all duration-200 ${
                         stage === 'down'
-                          ? 'bg-orange-500 text-white shadow-orange-500/30'
-                          : 'bg-zinc-900/80 text-green-400 border border-green-500/40'
+                          ? 'bg-amber-500 text-white shadow-orange-500/30'
+                          : 'bg-navy-700/80 text-green-400 border border-green-500/40'
                       }`}
                     >
                       {stage === 'down' ? '▼ DOWN' : '▲ UP'}
@@ -517,7 +517,7 @@ export default function VerifyPushups() {
                   <div className="absolute top-3 right-3 z-10">
                     <button
                       onClick={stopCounting}
-                      className="flex items-center gap-1.5 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-zinc-700 transition-colors"
+                      className="flex items-center gap-1.5 bg-navy-700/80 hover:bg-navy-800 text-navy-100 text-xs font-semibold px-3 py-1.5 rounded-full border border-navy-400 transition-colors"
                     >
                       <span className="w-2 h-2 rounded-sm bg-zinc-300 inline-block" />
                       Stop
@@ -529,34 +529,66 @@ export default function VerifyPushups() {
 
             {/* Angle threshold guide */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="card bg-zinc-900/60 p-3 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
-                  <span className="text-orange-400 text-sm font-bold">▼</span>
+              <div className="card bg-navy-700/60 p-3 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                  <span className="text-amber-400 text-sm font-bold">▼</span>
                 </div>
                 <div>
-                  <p className="text-xs text-zinc-500 font-medium uppercase tracking-wide">Down</p>
-                  <p className="text-zinc-200 text-sm">
-                    Angle <span className="text-orange-400 font-bold">&lt; 70°</span>
+                  <p className="text-xs text-navy-200 font-medium uppercase tracking-wide">Down</p>
+                  <p className="text-navy-100 text-sm">
+                    Angle <span className="text-amber-400 font-bold">&lt; 70°</span>
                   </p>
                 </div>
               </div>
-              <div className="card bg-zinc-900/60 p-3 flex items-center gap-3">
+              <div className="card bg-navy-700/60 p-3 flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
                   <span className="text-green-400 text-sm font-bold">▲</span>
                 </div>
                 <div>
-                  <p className="text-xs text-zinc-500 font-medium uppercase tracking-wide">Up</p>
-                  <p className="text-zinc-200 text-sm">
+                  <p className="text-xs text-navy-200 font-medium uppercase tracking-wide">Up</p>
+                  <p className="text-navy-100 text-sm">
                     Angle <span className="text-green-400 font-bold">&gt; 160°</span>
                   </p>
                 </div>
               </div>
             </div>
 
+            {/* Camera position reference */}
+            <div className="card bg-navy-700/40 p-4">
+              <p className="text-xs text-navy-200 font-medium uppercase tracking-wide mb-3">
+                Camera Position Reference
+              </p>
+              <p className="text-xs text-navy-300 mb-3">
+                Place your camera to the <span className="text-amber-400 font-semibold">side</span> so you look like the photos below — your full body should be visible in profile.
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col items-center gap-1.5">
+                  <div className="rounded-lg overflow-hidden bg-white/5 border border-navy-600 w-full">
+                    <img
+                      src="/upPushupPostition.png"
+                      alt="Up position — arms extended"
+                      className="w-full object-contain"
+                    />
+                  </div>
+                  <span className="text-xs text-green-400 font-medium">▲ Up position</span>
+                </div>
+                <div className="flex flex-col items-center gap-1.5">
+                  <div className="rounded-lg overflow-hidden bg-white/5 border border-navy-600 w-full">
+                    <img
+                      src="/downPushupPosition.png"
+                      alt="Down position — elbows bent"
+                      className="w-full object-contain"
+                    />
+                  </div>
+                  <span className="text-xs text-amber-400 font-medium">▼ Down position</span>
+                </div>
+              </div>
+            </div>
+
             {/* Tips */}
-            <div className="card bg-zinc-900/40 py-3 px-4">
-              <p className="text-xs text-zinc-500">
-                <span className="text-zinc-400 font-medium">Tips:</span> Face the camera side-on for best elbow tracking.
+            <div className="card bg-navy-700/40 py-3 px-4">
+              <p className="text-xs text-navy-200">
+                <span className="text-navy-200 font-medium">Tips:</span> Face the camera side-on for best elbow tracking.
                 Keep your arms fully visible. Good lighting improves accuracy.
               </p>
             </div>
@@ -566,28 +598,28 @@ export default function VerifyPushups() {
           <div className="space-y-4">
 
             {/* Rep counter */}
-            <div className={`card text-center py-8 transition-colors duration-200 ${counting ? 'border-orange-500/40 bg-orange-950/10' : ''}`}>
+            <div className={`card text-center py-8 transition-colors duration-200 ${counting ? 'border-amber-500/40 bg-orange-950/10' : ''}`}>
               <div className="flex items-center justify-center gap-2 mb-3">
                 {counting && (
-                  <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                 )}
-                <p className="text-xs text-zinc-500 uppercase tracking-wider font-medium">
+                <p className="text-xs text-navy-200 uppercase tracking-wider font-medium">
                   {counting ? 'Counting…' : 'Reps This Set'}
                 </p>
               </div>
               <p
                 className={`text-8xl font-bold tabular-nums transition-all duration-200 ${
-                  counting ? 'text-orange-400' : reps > 0 ? 'text-zinc-100' : 'text-zinc-700'
+                  counting ? 'text-amber-400' : reps > 0 ? 'text-navy-50' : 'text-navy-300'
                 }`}
               >
                 {reps}
               </p>
-              <p className="text-zinc-600 text-sm mt-3">pushups</p>
+              <p className="text-navy-300 text-sm mt-3">pushups</p>
             </div>
 
             {/* Elbow angle meter */}
             <div className="card py-5">
-              <p className="text-xs text-zinc-500 uppercase tracking-wider mb-3 font-medium text-center">
+              <p className="text-xs text-navy-200 uppercase tracking-wider mb-3 font-medium text-center">
                 Elbow Angle
               </p>
 
@@ -596,10 +628,10 @@ export default function VerifyPushups() {
                   <p
                     className={`text-4xl font-bold tabular-nums text-center transition-colors duration-150 ${
                       angle < 70
-                        ? 'text-orange-400'
+                        ? 'text-amber-400'
                         : angle > 160
                         ? 'text-green-400'
-                        : 'text-zinc-100'
+                        : 'text-navy-50'
                     }`}
                   >
                     {angle}°
@@ -607,11 +639,11 @@ export default function VerifyPushups() {
 
                   {/* Progress bar */}
                   <div className="mt-4 relative">
-                    <div className="w-full bg-zinc-800 rounded-full h-2.5">
+                    <div className="w-full bg-navy-800 rounded-full h-2.5">
                       <div
                         className={`h-2.5 rounded-full transition-all duration-100 ${
                           angle < 70
-                            ? 'bg-orange-500'
+                            ? 'bg-amber-500'
                             : angle > 160
                             ? 'bg-green-500'
                             : 'bg-zinc-500'
@@ -621,7 +653,7 @@ export default function VerifyPushups() {
                     </div>
                     {/* Threshold markers */}
                     <div
-                      className="absolute top-0 h-2.5 w-0.5 bg-orange-500/60"
+                      className="absolute top-0 h-2.5 w-0.5 bg-amber-500/60"
                       style={{ left: `${(70 / 180) * 100}%` }}
                     />
                     <div
@@ -629,7 +661,7 @@ export default function VerifyPushups() {
                       style={{ left: `${(160 / 180) * 100}%` }}
                     />
                   </div>
-                  <div className="flex justify-between mt-1 text-xs text-zinc-600">
+                  <div className="flex justify-between mt-1 text-xs text-navy-300">
                     <span>0°</span>
                     <span className="text-orange-500/50">70°</span>
                     <span className="text-green-500/50">160°</span>
@@ -638,8 +670,8 @@ export default function VerifyPushups() {
                 </>
               ) : (
                 <div className="text-center py-4">
-                  <p className="text-zinc-600 text-sm">Waiting for pose…</p>
-                  <p className="text-zinc-700 text-xs mt-1">Stand in frame</p>
+                  <p className="text-navy-300 text-sm">Waiting for pose…</p>
+                  <p className="text-navy-300 text-xs mt-1">Stand in frame</p>
                 </div>
               )}
             </div>
@@ -648,17 +680,17 @@ export default function VerifyPushups() {
             {submitted ? (
               <div className="card bg-green-900/20 border-green-800/40 text-center py-5">
                 <p className="text-green-400 font-bold text-lg">✓ Reps Logged!</p>
-                <p className="text-zinc-500 text-sm mt-1">
+                <p className="text-navy-200 text-sm mt-1">
                   {totalOwed > 0
                     ? `${totalOwed} pushups remaining`
                     : '🎉 All debt cleared!'}
                 </p>
-                <p className="text-zinc-600 text-xs mt-2">Counter reset — keep going!</p>
+                <p className="text-navy-300 text-xs mt-2">Counter reset — keep going!</p>
               </div>
             ) : counting ? (
               <button
                 onClick={stopCounting}
-                className="btn-secondary w-full py-4 text-base font-bold border-orange-500/30"
+                className="btn-secondary w-full py-4 text-base font-bold border-amber-500/30"
               >
                 ■ Stop &amp; Review
               </button>
@@ -688,7 +720,7 @@ export default function VerifyPushups() {
               <div className="card bg-green-900/10 border-green-800/30 text-center p-4">
                 <p className="text-2xl mb-1">🎉</p>
                 <p className="text-green-400 font-semibold text-sm">Debt Free!</p>
-                <p className="text-zinc-600 text-xs mt-1">No pushup debt outstanding</p>
+                <p className="text-navy-300 text-xs mt-1">No pushup debt outstanding</p>
               </div>
             )}
           </div>
