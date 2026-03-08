@@ -19,13 +19,15 @@ api.interceptors.request.use((config) => {
 });
 
 // Auth
-export const signup = (email, password) =>
-  api.post('/api/auth/signup', { email, password });
+export const signup = (email, username, password) =>
+  api.post('/api/auth/signup', { email, username, password });
 
-export const login = (email, password) =>
-  api.post('/api/auth/login', { email, password });
+export const login = (identifier, password) =>
+  api.post('/api/auth/login', { identifier, password });
 
 export const getMe = () => api.get('/api/auth/me');
+
+export const setUsername = (username) => api.patch('/api/auth/username', { username });
 
 // Tasks
 // Pass { date } for exact-day filter, { upToDate } for overdue+today view

@@ -5,7 +5,7 @@ import { login } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await login(email, password);
+      const res = await login(identifier, password);
       loginUser(res.data.token, res.data.user);
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed. Please try again.');
@@ -46,13 +46,13 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="label">Email</label>
+              <label className="label">Username or Email</label>
               <input
-                type="email"
+                type="text"
                 className="input"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="username or you@example.com"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 autoFocus
                 required
               />

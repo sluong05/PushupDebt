@@ -5,6 +5,12 @@ const auth = require('../middleware/auth');
 const router = express.Router();
 const prisma = new PrismaClient();
 
+function maskEmail(email) {
+  const [name, domain] = email.split('@');
+  if (name.length <= 2) return `${name[0]}***@${domain}`;
+  return `${name[0]}${name[1]}***@${domain}`;
+}
+
 // GET /api/leaderboard — users sorted by lowest total pushup debt
 router.get('/', auth, async (req, res) => {
   try {
@@ -12,6 +18,7 @@ router.get('/', auth, async (req, res) => {
       select: {
         id: true,
         email: true,
+        username: true,
         createdAt: true,
         tasks: {
           select: {
@@ -40,7 +47,7 @@ router.get('/', auth, async (req, res) => {
 
       return {
         id: user.id,
-        email: user.email,
+        username: user.username || maskEmail(user.email),
         totalDebt: Math.ceil(totalDebt),
         totalCompleted,
         memberSince: user.createdAt,

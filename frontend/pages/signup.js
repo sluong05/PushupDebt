@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
@@ -21,6 +22,11 @@ export default function Signup() {
     e.preventDefault();
     setError('');
 
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+      setError('Username must be 3–20 characters: letters, numbers, or underscores only');
+      return;
+    }
+
     if (password !== confirm) {
       setError('Passwords do not match');
       return;
@@ -34,7 +40,7 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      const res = await signup(email, password);
+      const res = await signup(email, username, password);
       loginUser(res.data.token, res.data.user);
     } catch (err) {
       setError(err.response?.data?.error || 'Sign up failed. Please try again.');
@@ -68,6 +74,21 @@ export default function Signup() {
                 autoFocus
                 required
               />
+            </div>
+
+            <div>
+              <label className="label">Username</label>
+              <input
+                type="text"
+                className="input"
+                placeholder="e.g. pushup_king"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                minLength={3}
+                maxLength={20}
+              />
+              <p className="text-xs text-navy-300 mt-1">3–20 characters · letters, numbers, underscores</p>
             </div>
 
             <div>

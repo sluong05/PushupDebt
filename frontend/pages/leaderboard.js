@@ -4,12 +4,6 @@ import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import { getLeaderboard, getStreak } from '../lib/api';
 
-function maskEmail(email) {
-  const [name, domain] = email.split('@');
-  if (name.length <= 2) return `${name[0]}***@${domain}`;
-  return `${name[0]}${name[1]}***@${domain}`;
-}
-
 export default function Leaderboard() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -93,7 +87,7 @@ export default function Leaderboard() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="font-semibold text-navy-50 truncate">
-                        {maskEmail(entry.email)}
+                        {entry.username}
                       </p>
                       {isCurrentUser && (
                         <span className="text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-medium flex-shrink-0">

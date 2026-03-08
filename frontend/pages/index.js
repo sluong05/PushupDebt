@@ -6,7 +6,7 @@ import DebtSummary from '../components/DebtSummary';
 import AddTaskModal from '../components/AddTaskModal';
 import LogPushupsModal from '../components/LogPushupsModal';
 import { useAuth } from '../contexts/AuthContext';
-import { getTasks, getDebt, getStreak, recalculateDebt } from '../lib/api';
+import { getTasks, getDebt, getStreak, recalculateDebt, setUsername } from '../lib/api';
 
 function todayLabel() {
   return new Date().toLocaleDateString('en-US', {
@@ -17,7 +17,7 @@ function todayLabel() {
 }
 
 export default function Dashboard() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, updateUser } = useAuth();
   const router = useRouter();
 
   const [tasks, setTasks] = useState([]);
@@ -27,6 +27,9 @@ export default function Dashboard() {
   const [showAddTask, setShowAddTask] = useState(false);
   const [showLogPushups, setShowLogPushups] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
+  const [usernameInput, setUsernameInput] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [usernameSaving, setUsernameSaving] = useState(false);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -71,6 +74,24 @@ export default function Dashboard() {
     loadData();
   }
 
+  async function handleSetUsername(e) {
+    e.preventDefault();
+    setUsernameError('');
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(usernameInput)) {
+      setUsernameError('3–20 characters: letters, numbers, underscores only');
+      return;
+    }
+    setUsernameSaving(true);
+    try {
+      const res = await setUsername(usernameInput);
+      updateUser(res.data.user);
+    } catch (err) {
+      setUsernameError(err.response?.data?.error || 'Failed to save username');
+    } finally {
+      setUsernameSaving(false);
+    }
+  }
+
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const todayEnd = new Date(); todayEnd.setHours(23, 59, 59, 999);
   const pendingCount = tasks.filter((t) => !t.completed).length;
@@ -93,6 +114,45 @@ export default function Dashboard() {
 
   return (
     <Layout streak={streak}>
+      {/* Username prompt for existing accounts */}
+      {!user?.username && (
+        <div className="card border-amber-500/40 bg-amber-900/10 mb-6 p-4">
+          <div className="flex items-start gap-3">
+            <span className="text-xl mt-0.5">👤</span>
+            <div className="flex-1">
+              <p className="text-amber-400 font-semibold text-sm">Set your username</p>
+              <p className="text-navy-200 text-xs mt-0.5 mb-3">
+                Your account doesn't have a username yet. Add one to appear on the leaderboard and sign in without your email.
+              </p>
+              <form onSubmit={handleSetUsername} className="flex gap-2 items-start">
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    className="input py-2 text-sm"
+                    placeholder="e.g. pushup_king"
+                    value={usernameInput}
+                    onChange={(e) => { setUsernameInput(e.target.value); setUsernameError(''); }}
+                    minLength={3}
+                    maxLength={20}
+                    required
+                  />
+                  {usernameError && (
+                    <p className="text-xs text-red-400 mt-1">{usernameError}</p>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  disabled={usernameSaving}
+                  className="btn-primary py-2 px-4 text-sm flex-shrink-0"
+                >
+                  {usernameSaving ? 'Saving…' : 'Save'}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Page header */}
       <div className="mb-8">
         <p className="text-zinc-500 text-sm mb-1">{todayLabel()}</p>
