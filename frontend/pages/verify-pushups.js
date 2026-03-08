@@ -232,7 +232,7 @@ export default function VerifyPushups() {
     fillPill(ctx, bx, by, tw + px * 2, ph, 5);
 
     ctx.fillStyle =
-      deg < 70  ? '#f97316'
+      deg < 85  ? '#f97316'
       : deg > 160 ? '#4ade80'
       : '#e4e4e7';
     ctx.textAlign    = 'center';
@@ -245,7 +245,7 @@ export default function VerifyPushups() {
 
     // ── State machine — only runs when user has pressed Start ────────────────
     if (countingRef.current) {
-      if (deg < 70 && stageRef.current === 'up') {
+      if (deg < 85 && stageRef.current === 'up') {
         stageRef.current = 'down';
         setStage('down');
       } else if (deg > 160 && stageRef.current === 'down') {
@@ -621,7 +621,7 @@ if (streamRef.current) {
                 <div>
                   <p className="text-xs text-navy-200 font-medium uppercase tracking-wide">Down</p>
                   <p className="text-navy-100 text-sm">
-                    Angle <span className="text-amber-400 font-bold">&lt; 70°</span>
+                    Angle <span className="text-amber-400 font-bold">&lt; 85°</span>
                   </p>
                 </div>
               </div>
@@ -715,7 +715,7 @@ if (streamRef.current) {
                 <>
                   <p
                     className={`text-4xl font-bold tabular-nums text-center transition-colors duration-150 ${
-                      angle < 70
+                      angle < 85
                         ? 'text-amber-400'
                         : angle > 160
                         ? 'text-green-400'
@@ -730,7 +730,7 @@ if (streamRef.current) {
                     <div className="w-full bg-navy-800 rounded-full h-2.5">
                       <div
                         className={`h-2.5 rounded-full transition-all duration-100 ${
-                          angle < 70
+                          angle < 85
                             ? 'bg-amber-500'
                             : angle > 160
                             ? 'bg-green-500'
@@ -742,7 +742,7 @@ if (streamRef.current) {
                     {/* Threshold markers */}
                     <div
                       className="absolute top-0 h-2.5 w-0.5 bg-amber-500/60"
-                      style={{ left: `${(70 / 180) * 100}%` }}
+                      style={{ left: `${(85 / 180) * 100}%` }}
                     />
                     <div
                       className="absolute top-0 h-2.5 w-0.5 bg-green-500/60"
@@ -751,7 +751,7 @@ if (streamRef.current) {
                   </div>
                   <div className="flex justify-between mt-1 text-xs text-navy-300">
                     <span>0°</span>
-                    <span className="text-orange-500/50">70°</span>
+                    <span className="text-orange-500/50">85°</span>
                     <span className="text-green-500/50">160°</span>
                     <span>180°</span>
                   </div>
