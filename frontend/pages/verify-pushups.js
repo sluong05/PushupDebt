@@ -91,6 +91,10 @@ export default function VerifyPushups() {
   const repsRef    = useRef(0);
   const countingRef = useRef(false);  // whether rep counting is active
 
+  // Gesture refs
+  const gestureStartRef    = useRef(null);   // timestamp when raise-hand gesture started
+  const gestureCooldownRef = useRef(false);  // prevents re-triggering immediately after toggle
+
   // UI state
   const [reps,       setReps]       = useState(0);
   const [angle,      setAngle]      = useState(null);
@@ -240,16 +244,87 @@ export default function VerifyPushups() {
     setAngle(Math.round(deg));
 
     // ── State machine — only runs when user has pressed Start ────────────────
-    if (!countingRef.current) return;
+    if (countingRef.current) {
+      if (deg < 70 && stageRef.current === 'up') {
+        stageRef.current = 'down';
+        setStage('down');
+      } else if (deg > 160 && stageRef.current === 'down') {
+        stageRef.current = 'up';
+        repsRef.current += 1;
+        setReps(repsRef.current);
+        setStage('up');
+      }
+    }
 
-    if (deg < 70 && stageRef.current === 'up') {
-      stageRef.current = 'down';
-      setStage('down');
-    } else if (deg > 160 && stageRef.current === 'down') {
-      stageRef.current = 'up';
-      repsRef.current += 1;
-      setReps(repsRef.current);
-      setStage('up');
+    // ── Raise-hand gesture: wrist held above shoulder for 1.5 s ─────────────
+    const GESTURE_HOLD_MS  = 1500;
+    const GESTURE_THRESHOLD = 0.15; // wrist must be this far above shoulder (normalised)
+
+    const lW  = L[IDX.L_WRIST];    const rW  = L[IDX.R_WRIST];
+    const lSh = L[IDX.L_SHOULDER]; const rSh = L[IDX.R_SHOULDER];
+
+    const lRaised = lW && lSh && lW.visibility > 0.5 && lSh.visibility > 0.5
+      && (lSh.y - lW.y) > GESTURE_THRESHOLD;
+    const rRaised = rW && rSh && rW.visibility > 0.5 && rSh.visibility > 0.5
+      && (rSh.y - rW.y) > GESTURE_THRESHOLD;
+
+    const gestureActive = lRaised || rRaised;
+    const activeWristLm = lRaised ? lW : rRaised ? rW : null;
+
+    const now = Date.now();
+
+    if (gestureActive && activeWristLm && !gestureCooldownRef.current) {
+      if (!gestureStartRef.current) gestureStartRef.current = now;
+
+      const held     = now - gestureStartRef.current;
+      const progress = Math.min(1, held / GESTURE_HOLD_MS);
+
+      // Draw progress arc near the raised wrist
+      const wx = fx(activeWristLm.x);
+      const wy = fy(activeWristLm.y);
+      const R  = 20;
+
+      // Background circle
+      ctx.beginPath();
+      ctx.arc(wx, wy - 36, R, 0, 2 * Math.PI);
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.lineWidth   = 3;
+      ctx.stroke();
+
+      // Progress arc
+      ctx.beginPath();
+      ctx.arc(wx, wy - 36, R, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress);
+      ctx.strokeStyle = countingRef.current ? '#f87171' : '#4ade80';
+      ctx.lineWidth   = 3;
+      ctx.lineCap     = 'round';
+      ctx.stroke();
+
+      // Label inside arc
+      const label = countingRef.current ? 'STOP' : 'GO';
+      ctx.font         = 'bold 9px Inter, system-ui, sans-serif';
+      ctx.fillStyle    = '#fff';
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, wx, wy - 36);
+      ctx.textBaseline = 'alphabetic';
+
+      if (held >= GESTURE_HOLD_MS) {
+        // Toggle counting
+        if (countingRef.current) {
+          countingRef.current = false;
+          setCounting(false);
+        } else {
+          stageRef.current    = 'up';
+          setStage('up');
+          countingRef.current = true;
+          setCounting(true);
+        }
+        gestureStartRef.current = null;
+        gestureCooldownRef.current = true;
+        setTimeout(() => { gestureCooldownRef.current = false; }, 2000);
+      }
+    } else if (!gestureActive) {
+      gestureStartRef.current = null;
     }
   }, []);
 
@@ -352,7 +427,7 @@ export default function VerifyPushups() {
       if (poseRef.current) {
         try { poseRef.current.close(); } catch (_) {}
       }
-      if (streamRef.current) {
+if (streamRef.current) {
         streamRef.current.getTracks().forEach((t) => t.stop());
       }
     };
@@ -480,7 +555,7 @@ export default function VerifyPushups() {
 
               {/* Start counting overlay — shown when camera is ready but not yet counting */}
               {!mpLoading && !camError && !counting && (
-                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[2px]">
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] gap-5">
                   <button
                     onClick={startCounting}
                     className="flex flex-col items-center gap-3 group"
@@ -497,6 +572,15 @@ export default function VerifyPushups() {
                       Get in position first
                     </span>
                   </button>
+
+                  {/* Gesture hint */}
+                  <div className="bg-black/50 rounded-xl px-4 py-2.5 flex items-center gap-2 border border-white/10">
+                    <span className="text-lg">🤚</span>
+                    <p className="text-white/80 text-xs leading-snug">
+                      Or raise your hand above your shoulder<br />
+                      and hold for <span className="text-amber-400 font-semibold">1.5 s</span> to start hands-free
+                    </p>
+                  </div>
                 </div>
               )}
 
@@ -514,7 +598,8 @@ export default function VerifyPushups() {
                       {stage === 'down' ? '▼ DOWN' : '▲ UP'}
                     </span>
                   </div>
-                  <div className="absolute top-3 right-3 z-10">
+                  <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+                    <span className="text-white/50 text-xs hidden sm:inline">🤚 raise hand to stop</span>
                     <button
                       onClick={stopCounting}
                       className="flex items-center gap-1.5 bg-navy-700/80 hover:bg-navy-800 text-navy-100 text-xs font-semibold px-3 py-1.5 rounded-full border border-navy-400 transition-colors"
@@ -586,10 +671,13 @@ export default function VerifyPushups() {
             </div>
 
             {/* Tips */}
-            <div className="card bg-navy-700/40 py-3 px-4">
+            <div className="card bg-navy-700/40 py-3 px-4 space-y-1.5">
               <p className="text-xs text-navy-200">
                 <span className="text-navy-200 font-medium">Tips:</span> Face the camera side-on for best elbow tracking.
                 Keep your arms fully visible. Good lighting improves accuracy.
+              </p>
+              <p className="text-xs text-navy-300">
+                <span className="text-amber-400 font-medium">Gesture shortcut:</span> Raise one hand above your shoulder and hold for 1.5 s to start or stop counting — no button needed.
               </p>
             </div>
           </div>
