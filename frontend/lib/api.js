@@ -29,6 +29,9 @@ export const getMe = () => api.get('/api/auth/me');
 
 export const setUsername = (username) => api.patch('/api/auth/username', { username });
 
+export const changePassword = (oldPassword, newPassword) =>
+  api.patch('/api/auth/password', { oldPassword, newPassword });
+
 // Tasks
 // Pass { date } for exact-day filter, { upToDate } for overdue+today view
 export const getTasks = (params = {}) =>

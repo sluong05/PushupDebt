@@ -88,6 +88,37 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// PATCH /api/auth/password — change password (requires old password)
+router.patch('/password', require('../middleware/auth'), async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    return res.status(400).json({ error: 'Old and new password are required' });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: 'New password must be at least 6 characters' });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: req.userId } });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const valid = await bcrypt.compare(oldPassword, user.password);
+    if (!valid) {
+      return res.status(401).json({ error: 'Current password is incorrect' });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({ where: { id: req.userId }, data: { password: hashed } });
+
+    return res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // PATCH /api/auth/username — set or update username for existing accounts
 router.patch('/username', require('../middleware/auth'), async (req, res) => {
   const { username } = req.body;

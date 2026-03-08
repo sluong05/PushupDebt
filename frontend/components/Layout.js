@@ -39,9 +39,19 @@ export default function Layout({ children, streak = 0 }) {
                 Leaderboard
               </Link>
 
-              {/* User email */}
+              {/* Settings link */}
+              <Link
+                href="/settings"
+                className={`btn-ghost text-sm hidden sm:block ${
+                  router.pathname === '/settings' ? 'text-amber-400' : ''
+                }`}
+              >
+                Settings
+              </Link>
+
+              {/* Username / email */}
               <span className="text-sm text-navy-200 hidden md:block truncate max-w-[160px]">
-                {user.email}
+                {user.username || user.email}
               </span>
 
               {/* Logout */}
