@@ -616,6 +616,42 @@ if (streamRef.current) {
                   </div>
                 </>
               )}
+
+              {/* ── Mobile stats bar — always visible at bottom of video ── */}
+              {!mpLoading && !camError && (
+                <div className="absolute bottom-0 left-0 right-0 z-10 lg:hidden bg-black/60 backdrop-blur-sm px-4 py-2 flex items-center justify-between gap-3">
+                  {/* Rep count */}
+                  <div className="flex items-center gap-2">
+                    {counting && <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse flex-shrink-0" />}
+                    <span className={`text-3xl font-bold tabular-nums ${counting ? 'text-amber-400' : reps > 0 ? 'text-white' : 'text-navy-300'}`}>
+                      {reps}
+                    </span>
+                    <span className="text-xs text-navy-300">reps</span>
+                  </div>
+
+                  {/* Back angle status */}
+                  <div className="text-center">
+                    {backAngle !== null ? (
+                      <span className={`text-xs font-medium ${backAngle < 40 ? 'text-green-400' : 'text-red-400'}`}>
+                        {backAngle < 40 ? '✓ back ok' : '✗ too upright'}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-navy-400">align body</span>
+                    )}
+                  </div>
+
+                  {/* Submit / log button */}
+                  {!counting && reps > 0 && (
+                    <button
+                      onClick={handleSubmit}
+                      disabled={submitting}
+                      className="btn-primary py-1.5 px-3 text-xs font-bold flex-shrink-0"
+                    >
+                      {submitting ? 'Logging…' : `Log ${reps}`}
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Angle threshold guide */}
@@ -644,8 +680,8 @@ if (streamRef.current) {
               </div>
             </div>
 
-            {/* Camera position reference */}
-            <div className="card bg-navy-700/40 p-4">
+            {/* Camera position reference — hidden on mobile to save scroll space */}
+            <div className="card bg-navy-700/40 p-4 hidden lg:block">
               <p className="text-xs text-navy-200 font-medium uppercase tracking-wide mb-3">
                 Camera Position Reference
               </p>
@@ -689,7 +725,7 @@ if (streamRef.current) {
           </div>
 
           {/* ── Right: Stats + submit ──────────────────────────────────────── */}
-          <div className="space-y-4">
+          <div className="space-y-4 lg:block">
 
             {/* Rep counter */}
             <div className={`card text-center py-8 transition-colors duration-200 ${counting ? 'border-amber-500/40 bg-orange-950/10' : ''}`}>

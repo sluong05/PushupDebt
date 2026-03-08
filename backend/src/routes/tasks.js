@@ -48,10 +48,15 @@ router.get('/', auth, async (req, res) => {
 
 // POST /api/tasks — create a new task
 router.post('/', auth, async (req, res) => {
-  const { title, dueDate } = req.body;
+  const { title, dueDate, recurrence = 'none' } = req.body;
 
   if (!title || title.trim() === '') {
     return res.status(400).json({ error: 'Title is required' });
+  }
+
+  const validRecurrences = ['none', 'daily', 'weekly'];
+  if (!validRecurrences.includes(recurrence)) {
+    return res.status(400).json({ error: 'Invalid recurrence value' });
   }
 
   try {
@@ -62,6 +67,7 @@ router.post('/', auth, async (req, res) => {
       data: {
         title: title.trim(),
         dueDate: due,
+        recurrence,
         userId: req.userId,
       },
       include: { pushupDebt: true },

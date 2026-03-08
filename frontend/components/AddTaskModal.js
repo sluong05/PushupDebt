@@ -4,6 +4,7 @@ import { createTask } from '../lib/api';
 export default function AddTaskModal({ onClose, onTaskAdded }) {
   const [title, setTitle] = useState('');
   const [dueDate, setDueDate] = useState(todayString());
+  const [recurrence, setRecurrence] = useState('none');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -22,7 +23,7 @@ export default function AddTaskModal({ onClose, onTaskAdded }) {
     setError('');
 
     try {
-      const res = await createTask(title.trim(), dueDate);
+      const res = await createTask(title.trim(), dueDate, recurrence);
       onTaskAdded(res.data.task);
       onClose();
     } catch (err) {
@@ -67,6 +68,35 @@ export default function AddTaskModal({ onClose, onTaskAdded }) {
             <p className="text-xs text-navy-300 mt-1">
               Incomplete tasks past this date generate pushup debt.
             </p>
+          </div>
+
+          <div>
+            <label className="label">Recurrence</label>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { value: 'none',   label: 'None' },
+                { value: 'daily',  label: '🔄 Daily' },
+                { value: 'weekly', label: '📅 Weekly' },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setRecurrence(opt.value)}
+                  className={`py-2 rounded-lg border text-sm font-medium transition-colors ${
+                    recurrence === opt.value
+                      ? 'bg-amber-500 border-amber-500 text-white'
+                      : 'border-navy-400 text-navy-200 hover:border-navy-300'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            {recurrence !== 'none' && (
+              <p className="text-xs text-navy-300 mt-1">
+                Task resets automatically each {recurrence === 'daily' ? 'day' : 'week'} after completion.
+              </p>
+            )}
           </div>
 
           {error && (

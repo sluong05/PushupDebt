@@ -46,22 +46,58 @@ async function calculateAndUpdateDebt(userId = null) {
         },
       });
     } else if (!task.pushupDebt.resolved) {
-      // Debt already exists and is unpaid — apply 10% interest
-      const currentOwed = task.pushupDebt.pushupsOwed;
-      const newOwed = currentOwed * 1.10;
-
-      await prisma.pushupDebt.update({
-        where: { id: task.pushupDebt.id },
-        data: {
-          pushupsOwed: newOwed,
-          daysOverdue,
-          interestApplied: true,
-        },
-      });
+      if (userId === null) {
+        // Nightly cron only — apply 10% compound interest once per day
+        const newOwed = task.pushupDebt.pushupsOwed * 1.10;
+        await prisma.pushupDebt.update({
+          where: { id: task.pushupDebt.id },
+          data: { pushupsOwed: newOwed, daysOverdue, interestApplied: true },
+        });
+      } else {
+        // On-demand (dashboard visit) — just keep daysOverdue current, no compounding
+        await prisma.pushupDebt.update({
+          where: { id: task.pushupDebt.id },
+          data: { daysOverdue },
+        });
+      }
     }
   }
 
   console.log(`[DebtJob] Processed ${overdueTasks.length} overdue tasks${userId ? ` for user ${userId}` : ''}`);
+
+  // ── Reset completed recurring tasks for their next period ─────────────────
+  // Only runs on the full nightly pass (not per-user on-demand calls)
+  if (userId) return;
+
+  const completedRecurring = await prisma.task.findMany({
+    where: { completed: true, recurrence: { not: 'none' } },
+    include: { pushupDebt: true },
+  });
+
+  for (const task of completedRecurring) {
+    const nextDue = new Date();
+
+    if (task.recurrence === 'daily') {
+      nextDue.setHours(23, 59, 59, 999);
+    } else if (task.recurrence === 'weekly') {
+      const base = new Date(task.dueDate);
+      base.setDate(base.getDate() + 7);
+      base.setHours(23, 59, 59, 999);
+      nextDue.setTime(base.getTime());
+    }
+
+    // Remove resolved debt so a fresh debt record can be created if overdue again
+    if (task.pushupDebt?.resolved) {
+      await prisma.pushupDebt.delete({ where: { id: task.pushupDebt.id } });
+    }
+
+    await prisma.task.update({
+      where: { id: task.id },
+      data: { completed: false, completedAt: null, dueDate: nextDue },
+    });
+  }
+
+  console.log(`[DebtJob] Reset ${completedRecurring.length} recurring tasks`);
 }
 
 /**

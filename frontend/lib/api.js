@@ -37,8 +37,8 @@ export const changePassword = (oldPassword, newPassword) =>
 export const getTasks = (params = {}) =>
   api.get('/api/tasks', { params });
 
-export const createTask = (title, dueDate) =>
-  api.post('/api/tasks', { title, dueDate });
+export const createTask = (title, dueDate, recurrence = 'none') =>
+  api.post('/api/tasks', { title, dueDate, recurrence });
 
 export const completeTask = (taskId) =>
   api.patch(`/api/tasks/${taskId}/complete`);

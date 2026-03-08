@@ -84,6 +84,11 @@ function TaskItem({ task, onComplete, onDelete }) {
           <span className={`text-xs ${dueInfo.overdue && !task.completed ? 'text-red-400 font-medium' : 'text-navy-200'}`}>
             {dueInfo.label}
           </span>
+          {task.recurrence !== 'none' && (
+            <span className="text-xs bg-navy-700 text-navy-200 px-2 py-0.5 rounded-full">
+              {task.recurrence === 'daily' ? '🔄 Daily' : '📅 Weekly'}
+            </span>
+          )}
           {hasDebt && (
             <span className="text-xs bg-red-900/40 text-red-400 px-2 py-0.5 rounded-full font-medium">
               {Math.ceil(task.pushupDebt.pushupsOwed)} pushups owed
