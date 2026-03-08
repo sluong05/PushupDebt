@@ -583,30 +583,15 @@ if (streamRef.current) {
 
               {/* Start counting overlay — shown when camera is ready but not yet counting */}
               {!mpLoading && !camError && !counting && (
-                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] gap-5">
-                  <button
-                    onClick={startCounting}
-                    className="flex flex-col items-center gap-3 group"
-                  >
-                    <div className="w-20 h-20 rounded-full bg-amber-500 hover:bg-amber-400 flex items-center justify-center shadow-2xl shadow-amber-500/40 transition-all duration-150 group-hover:scale-105">
-                      <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </div>
-                    <span className="text-white font-bold text-lg drop-shadow-md">
-                      {reps > 0 ? 'Resume Counting' : 'Start Counting'}
-                    </span>
-                    <span className="text-navy-100 text-sm drop-shadow-md">
-                      Get in position first
-                    </span>
-                  </button>
-
-                  {/* Gesture hint */}
-                  <div className="bg-black/50 rounded-xl px-4 py-2.5 flex items-center gap-2 border border-white/10">
-                    <span className="text-lg">🤚</span>
-                    <p className="text-white/80 text-xs leading-snug">
-                      Or raise your hand above your shoulder<br />
-                      and hold for <span className="text-amber-400 font-semibold">1.5 s</span> to start hands-free
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] gap-4">
+                  <span className="text-5xl drop-shadow-lg">🤚</span>
+                  <div className="text-center">
+                    <p className="text-white font-bold text-lg drop-shadow-md">
+                      {reps > 0 ? 'Ready to resume' : 'Get in position'}
+                    </p>
+                    <p className="text-navy-100 text-sm drop-shadow-md mt-1">
+                      Raise your hand above your shoulder<br />
+                      and hold for <span className="text-amber-400 font-semibold">1.5 s</span> to start
                     </p>
                   </div>
                 </div>
@@ -626,15 +611,8 @@ if (streamRef.current) {
                       {stage === 'down' ? '▼ DOWN' : '▲ UP'}
                     </span>
                   </div>
-                  <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
-                    <span className="text-white/50 text-xs hidden sm:inline">🤚 raise hand to stop</span>
-                    <button
-                      onClick={stopCounting}
-                      className="flex items-center gap-1.5 bg-navy-700/80 hover:bg-navy-800 text-navy-100 text-xs font-semibold px-3 py-1.5 rounded-full border border-navy-400 transition-colors"
-                    >
-                      <span className="w-2 h-2 rounded-sm bg-zinc-300 inline-block" />
-                      Stop
-                    </button>
+                  <div className="absolute top-3 right-3 z-10">
+                    <span className="text-white/50 text-xs bg-black/40 px-2 py-1 rounded-full">🤚 raise hand to stop</span>
                   </div>
                 </>
               )}
@@ -829,13 +807,6 @@ if (streamRef.current) {
                 </p>
                 <p className="text-navy-300 text-xs mt-2">Counter reset — keep going!</p>
               </div>
-            ) : counting ? (
-              <button
-                onClick={stopCounting}
-                className="btn-secondary w-full py-4 text-base font-bold border-amber-500/30"
-              >
-                ■ Stop &amp; Review
-              </button>
             ) : (
               <button
                 onClick={handleSubmit}
