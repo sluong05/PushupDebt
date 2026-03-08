@@ -98,6 +98,7 @@ export default function VerifyPushups() {
   // UI state
   const [reps,       setReps]       = useState(0);
   const [angle,      setAngle]      = useState(null);
+  const [backAngle,  setBackAngle]  = useState(null);
   const [stage,      setStage]      = useState('up');
   const [counting,   setCounting]   = useState(false);
   const [mpLoading,  setMpLoading]  = useState(true);
@@ -243,12 +244,39 @@ export default function VerifyPushups() {
     // Update React display state (batched by React 18)
     setAngle(Math.round(deg));
 
+    // ── Back / torso angle — shoulder→hip line vs horizontal ─────────────────
+    const lBackVis = (L[IDX.L_SHOULDER]?.visibility || 0) + (L[IDX.L_HIP]?.visibility || 0);
+    const rBackVis = (L[IDX.R_SHOULDER]?.visibility || 0) + (L[IDX.R_HIP]?.visibility || 0);
+    const useLeftBack = lBackVis >= rBackVis;
+    const bSh  = useLeftBack ? L[IDX.L_SHOULDER] : L[IDX.R_SHOULDER];
+    const bHip = useLeftBack ? L[IDX.L_HIP]      : L[IDX.R_HIP];
+
+    let backDeg       = null;
+    let backParallel  = false; // must be confirmed visible to allow counting
+    if (bSh && bHip && (bSh.visibility || 0) > 0.3 && (bHip.visibility || 0) > 0.3) {
+      const dx = Math.abs(bSh.x - bHip.x);
+      const dy = Math.abs(bSh.y - bHip.y);
+      backDeg      = Math.atan2(dy, dx) * (180 / Math.PI);
+      backParallel = backDeg < 40;
+      setBackAngle(Math.round(backDeg));
+
+      // Draw a highlighted spine line over the subtle body skeleton
+      const spineColor = backParallel ? 'rgba(74,222,128,0.85)' : 'rgba(248,113,113,0.85)';
+      drawLine(
+        useLeftBack ? IDX.L_SHOULDER : IDX.R_SHOULDER,
+        useLeftBack ? IDX.L_HIP      : IDX.R_HIP,
+        spineColor, 4
+      );
+    } else {
+      setBackAngle(null);
+    }
+
     // ── State machine — only runs when user has pressed Start ────────────────
     if (countingRef.current) {
-      if (deg < 85 && stageRef.current === 'up') {
+      if (deg < 85 && stageRef.current === 'up' && backParallel) {
         stageRef.current = 'down';
         setStage('down');
-      } else if (deg > 160 && stageRef.current === 'down') {
+      } else if (deg > 160 && stageRef.current === 'down' && backParallel) {
         stageRef.current = 'up';
         repsRef.current += 1;
         setReps(repsRef.current);
@@ -703,6 +731,32 @@ if (streamRef.current) {
                 {reps}
               </p>
               <p className="text-navy-300 text-sm mt-3">pushups</p>
+            </div>
+
+            {/* Back angle indicator */}
+            <div className={`card py-4 px-5 flex items-center gap-4 transition-colors duration-200 ${
+              backAngle === null ? '' : backAngle < 40 ? 'border-green-500/30' : 'border-red-500/30'
+            }`}>
+              <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${
+                backAngle === null ? 'bg-navy-700' : backAngle < 40 ? 'bg-green-500/20' : 'bg-red-500/20'
+              }`}>
+                <span className={`text-sm font-bold ${
+                  backAngle === null ? 'text-navy-300' : backAngle < 40 ? 'text-green-400' : 'text-red-400'
+                }`}>—</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-navy-200 uppercase tracking-wide font-medium">Back Angle</p>
+                {backAngle !== null ? (
+                  <p className={`text-lg font-bold tabular-nums ${backAngle < 40 ? 'text-green-400' : 'text-red-400'}`}>
+                    {backAngle}°{' '}
+                    <span className="text-xs font-normal">
+                      {backAngle < 40 ? '✓ parallel' : '✗ too upright'}
+                    </span>
+                  </p>
+                ) : (
+                  <p className="text-navy-300 text-sm">Waiting for pose…</p>
+                )}
+              </div>
             </div>
 
             {/* Elbow angle meter */}
