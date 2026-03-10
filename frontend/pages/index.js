@@ -4,7 +4,6 @@ import Layout from '../components/Layout';
 import TaskList from '../components/TaskList';
 import DebtSummary from '../components/DebtSummary';
 import AddTaskModal from '../components/AddTaskModal';
-import LogPushupsModal from '../components/LogPushupsModal';
 import { useAuth } from '../contexts/AuthContext';
 import { getTasks, getDebt, getStreak, recalculateDebt, setUsername } from '../lib/api';
 
@@ -25,7 +24,7 @@ export default function Dashboard() {
   const [totalOwed, setTotalOwed] = useState(0);
   const [streak, setStreak] = useState(0);
   const [showAddTask, setShowAddTask] = useState(false);
-  const [showLogPushups, setShowLogPushups] = useState(false);
+  const [showDebtBlock, setShowDebtBlock] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
   const [usernameInput, setUsernameInput] = useState('');
   const [usernameError, setUsernameError] = useState('');
@@ -67,10 +66,6 @@ export default function Dashboard() {
   async function handleTaskAdded() {
     // Recalculate in case the new task was already overdue, then refresh all data
     await recalculateDebt().catch(() => {});
-    loadData();
-  }
-
-  function handleLogged() {
     loadData();
   }
 
@@ -183,8 +178,12 @@ export default function Dashboard() {
                   </p>
                 </div>
                 <button
-                  onClick={() => setShowAddTask(true)}
-                  className="btn-primary text-sm py-2 px-3 flex items-center gap-1.5"
+                  onClick={() => totalOwed > 99 ? setShowDebtBlock(true) : setShowAddTask(true)}
+                  className={`text-sm py-2 px-3 flex items-center gap-1.5 rounded-lg font-semibold transition-colors duration-150 ${
+                    totalOwed > 99
+                      ? 'bg-navy-400 text-navy-200 cursor-not-allowed opacity-60'
+                      : 'btn-primary'
+                  }`}
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -229,23 +228,14 @@ export default function Dashboard() {
 
           {/* Right column — Debt */}
           <div className="lg:col-span-2">
-            <div className="mb-3 flex items-center justify-between">
+            <div className="mb-3">
               <h2 className="text-base font-bold text-navy-50">Pushup Debt</h2>
-              {totalOwed > 0 && (
-                <button
-                  onClick={() => setShowLogPushups(true)}
-                  className="text-xs text-amber-400 hover:text-amber-300 font-medium"
-                >
-                  Log pushups →
-                </button>
-              )}
             </div>
 
             <DebtSummary
               debts={debts}
               totalOwed={totalOwed}
               todayAtRisk={todayAtRisk}
-              onLogPushups={() => setShowLogPushups(true)}
             />
 
             {/* Formula info */}
@@ -257,10 +247,6 @@ export default function Dashboard() {
                 <div className="flex items-center gap-2">
                   <span className="text-amber-400 font-mono">5 × days</span>
                   <span>pushups per overdue day</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-amber-400 font-mono">×1.10</span>
-                  <span>daily interest on unpaid debt</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-amber-400 font-mono">🔥</span>
@@ -280,13 +266,32 @@ export default function Dashboard() {
         />
       )}
 
-      {showLogPushups && (
-        <LogPushupsModal
-          totalOwed={totalOwed}
-          onClose={() => setShowLogPushups(false)}
-          onLogged={handleLogged}
-        />
+      {showDebtBlock && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="card w-full max-w-sm text-center">
+            <p className="text-4xl mb-4">🚫</p>
+            <h2 className="text-lg font-bold text-navy-50 mb-2">Too Much Debt!</h2>
+            <p className="text-navy-200 text-sm mb-6">
+              Can't add more tasks until you do your pushups.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDebtBlock(false)}
+                className="btn-secondary flex-1"
+              >
+                Dismiss
+              </button>
+              <a
+                href="/verify-pushups"
+                className="btn-primary flex-1 text-center"
+              >
+                💪 Do Pushups
+              </a>
+            </div>
+          </div>
+        </div>
       )}
+
     </Layout>
   );
 }

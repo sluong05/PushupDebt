@@ -46,20 +46,10 @@ async function calculateAndUpdateDebt(userId = null) {
         },
       });
     } else if (!task.pushupDebt.resolved) {
-      if (userId === null) {
-        // Nightly cron only — apply 10% compound interest once per day
-        const newOwed = task.pushupDebt.pushupsOwed * 1.10;
-        await prisma.pushupDebt.update({
-          where: { id: task.pushupDebt.id },
-          data: { pushupsOwed: newOwed, daysOverdue, interestApplied: true },
-        });
-      } else {
-        // On-demand (dashboard visit) — just keep daysOverdue current, no compounding
-        await prisma.pushupDebt.update({
-          where: { id: task.pushupDebt.id },
-          data: { daysOverdue },
-        });
-      }
+      await prisma.pushupDebt.update({
+        where: { id: task.pushupDebt.id },
+        data: { pushupsOwed: basePushups, daysOverdue },
+      });
     }
   }
 
@@ -78,11 +68,11 @@ async function calculateAndUpdateDebt(userId = null) {
     const nextDue = new Date();
 
     if (task.recurrence === 'daily') {
-      nextDue.setHours(23, 59, 59, 999);
+      nextDue.setUTCHours(23, 59, 59, 999);
     } else if (task.recurrence === 'weekly') {
       const base = new Date(task.dueDate);
-      base.setDate(base.getDate() + 7);
-      base.setHours(23, 59, 59, 999);
+      base.setUTCDate(base.getUTCDate() + 7);
+      base.setUTCHours(23, 59, 59, 999);
       nextDue.setTime(base.getTime());
     }
 

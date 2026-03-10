@@ -20,9 +20,9 @@ router.get('/', auth, async (req, res) => {
       end.setHours(23, 59, 59, 999);
       const dayStart = new Date(upToDate);
       dayStart.setHours(0, 0, 0, 0);
-      // Return: all incomplete tasks due by end of day, plus completed tasks from today
+      // Return: all incomplete tasks (any due date) + tasks completed today
       whereClause.OR = [
-        { completed: false, dueDate: { lte: end } },
+        { completed: false },
         { completed: true, completedAt: { gte: dayStart } },
       ];
     } else if (date) {
@@ -61,7 +61,7 @@ router.post('/', auth, async (req, res) => {
 
   try {
     const due = dueDate ? new Date(dueDate) : new Date();
-    due.setHours(23, 59, 59, 999);
+    due.setUTCHours(23, 59, 59, 999);
 
     const task = await prisma.task.create({
       data: {

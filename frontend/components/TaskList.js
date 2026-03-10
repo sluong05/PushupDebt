@@ -22,7 +22,14 @@ function formatDueDate(dateStr) {
   };
 }
 
-function TaskItem({ task, onComplete, onDelete }) {
+const colorStyles = {
+  red:     'border-red-700/50 bg-red-900/10',
+  yellow:  'border-yellow-600/50 bg-yellow-900/10',
+  green:   'border-green-700/50 bg-green-900/10',
+  default: 'border-navy-400 bg-navy-600/60 hover:border-navy-300',
+};
+
+function TaskItem({ task, onComplete, onDelete, color = 'default' }) {
   const [completing, setCompleting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const dueInfo = formatDueDate(task.dueDate);
@@ -50,11 +57,7 @@ function TaskItem({ task, onComplete, onDelete }) {
   return (
     <div
       className={`flex items-start gap-3 p-4 rounded-xl border transition-all ${
-        task.completed
-          ? 'border-navy-400 bg-navy-600/40 opacity-60'
-          : hasDebt
-          ? 'border-red-700/50 bg-red-900/10'
-          : 'border-navy-400 bg-navy-600/60 hover:border-navy-300'
+        task.completed ? 'border-navy-400 bg-navy-600/40 opacity-60' : colorStyles[color]
       }`}
     >
       {/* Checkbox */}
@@ -94,9 +97,6 @@ function TaskItem({ task, onComplete, onDelete }) {
               {Math.ceil(task.pushupDebt.pushupsOwed)} pushups owed
             </span>
           )}
-          {task.pushupDebt?.interestApplied && (
-            <span className="text-xs text-amber-500/70">+10% interest</span>
-          )}
         </div>
       </div>
 
@@ -134,9 +134,6 @@ export default function TaskList({ tasks, onTaskUpdated }) {
     }
   }
 
-  const pending = tasks.filter((t) => !t.completed);
-  const completed = tasks.filter((t) => t.completed);
-
   if (tasks.length === 0) {
     return (
       <div className="text-center py-12">
@@ -147,16 +144,37 @@ export default function TaskList({ tasks, onTaskUpdated }) {
     );
   }
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const completed = tasks.filter((t) => t.completed);
+  const incomplete = tasks
+    .filter((t) => !t.completed)
+    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+  const overdue  = incomplete.filter((t) => new Date(t.dueDate) < today);
+  const upcoming = incomplete.filter((t) => new Date(t.dueDate) >= today);
+
+  const half    = Math.ceil(upcoming.length / 2);
+  const soonest = upcoming.slice(0, half);
+  const later   = upcoming.slice(half);
+
   return (
     <div className="space-y-2">
-      {pending.map((task) => (
-        <TaskItem key={task.id} task={task} onComplete={handleComplete} onDelete={handleDelete} />
+      {overdue.map((task) => (
+        <TaskItem key={task.id} task={task} onComplete={handleComplete} onDelete={handleDelete} color="red" />
       ))}
-      {completed.length > 0 && pending.length > 0 && (
+      {soonest.map((task) => (
+        <TaskItem key={task.id} task={task} onComplete={handleComplete} onDelete={handleDelete} color="yellow" />
+      ))}
+      {later.map((task) => (
+        <TaskItem key={task.id} task={task} onComplete={handleComplete} onDelete={handleDelete} color="green" />
+      ))}
+      {completed.length > 0 && incomplete.length > 0 && (
         <div className="border-t border-navy-400 my-3" />
       )}
       {completed.map((task) => (
-        <TaskItem key={task.id} task={task} onComplete={handleComplete} onDelete={handleDelete} />
+        <TaskItem key={task.id} task={task} onComplete={handleComplete} onDelete={handleDelete} color="default" />
       ))}
     </div>
   );

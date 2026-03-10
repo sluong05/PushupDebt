@@ -1,4 +1,6 @@
-export default function DebtSummary({ debts, totalOwed, todayAtRisk = [], onLogPushups }) {
+import Link from 'next/link';
+
+export default function DebtSummary({ debts, totalOwed, todayAtRisk = [] }) {
   const potentialAdditional = todayAtRisk.length * 5;
   const potentialTotal = totalOwed + potentialAdditional;
 
@@ -51,9 +53,9 @@ export default function DebtSummary({ debts, totalOwed, todayAtRisk = [], onLogP
           </div>
         )}
 
-        <button onClick={onLogPushups} className="btn-primary w-full mt-5 text-base py-3">
-          💪 Log Pushups
-        </button>
+        <Link href="/verify-pushups" className="btn-primary w-full mt-5 text-base py-3 text-center block">
+          💪 Log Pushups on Camera
+        </Link>
       </div>
 
       {/* Potential debt from today's unfinished tasks */}
@@ -74,9 +76,6 @@ export default function DebtSummary({ debts, totalOwed, todayAtRisk = [], onLogP
                   <p className="text-sm font-medium text-navy-50 truncate">{debt.task.title}</p>
                   <p className="text-xs text-navy-200">
                     {debt.daysOverdue} {debt.daysOverdue === 1 ? 'day' : 'days'} overdue
-                    {debt.interestApplied && (
-                      <span className="text-amber-500/80 ml-1">· +10% interest</span>
-                    )}
                   </p>
                 </div>
                 <div className="flex-shrink-0 text-right">
